@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文化科普 | 云滇风物</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC',sans-serif;}
+        h1,h2,h3{font-family:'Noto Serif SC',serif;}
+        :root{
+            --main:#2A5B57;
+            --accent:#A64B2A;
+            --bg:#F2EBDF;
+            --text:#2C2C2C;
+            --text-light:#666;
+            --light:#E5E0D4;
+        }
+        body{background:var(--bg);color:var(--text);padding-top:70px;}
+        nav{width:100%;position:fixed;top:0;padding:1.2rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(42,91,87,0.95);z-index:999;}
+        .logo{font-family:'Noto Serif SC',serif;font-size:1.5rem;color:#fff;font-weight:bold;}
+        .nav-links a{color:#fff;text-decoration:none;margin-left:2rem;transition:0.3s;}
+        .nav-links a:hover{color:var(--accent);}
+        .container{max-width:1100px;margin:0 auto;padding:3rem 2rem;}
+        .page-title{text-align:center;margin-bottom:2rem;}
+        .filter{display:flex;gap:1rem;justify-content:center;margin-bottom:3rem;flex-wrap:wrap;}
+        .filter button{padding:0.6rem 1.2rem;border:1px solid var(--main);background:transparent;color:var(--main);border-radius:2px;cursor:pointer;transition:0.3s;}
+        .filter button.active,.filter button:hover{background:var(--main);color:#fff;}
+        .article-block{background:#fff;padding:2rem;border-radius:8px;margin-bottom:3rem;}
+        .article-block h2{color:var(--main);margin-bottom:1rem;}
+        .article-block p{line-height:1.8;margin-bottom:1rem;color:var(--text);}
+        .article-block img{width:100%;border-radius:4px;margin:1rem 0;}
+        footer{background:var(--main);color:#fff;text-align:center;padding:2rem;margin-top:4rem;}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">云滇风物</div>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="list.html">非遗名录</a>
+            <a href="gallery.html">风物图集</a>
+            <a href="article.html">文化科普</a>
+            <a href="message.html">交流留言</a>
+            <a href="about.html">关于我们</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-title">
+            <h1>非遗新生 · 传统纹样与当代设计</h1>
+            <p>扎根云南民族手工，让古老非遗走出村寨，融入现代生活</p>
+        </div>
+        <div class="filter">
+            <button class="active">非遗保护现状</button>
+            <button>纹样文化解读</button>
+            <button>非遗文创创新</button>
+        </div>
+        <div class="article-block">
+            <h2>云南非遗保护现状</h2>
+            <p>云南是我国非物质文化遗产资源大省，大量技艺依靠口传心授。随着时代变迁，传承人老龄化、手艺传播渠道有限，很多传统技艺面临失传风险。数字化展示网站可以作为轻量化传播载体，打破地域限制，让更多年轻人了解非遗。</p>
+            <img src="https://picsum.photos/id/103/1000/400">
+            <p>数字化不是替代手工，而是记录、保存与传播，为非遗传承开辟新路径。</p>
+        </div>
+        <div class="article-block">
+            <h2>民族纹样文化解读</h2>
+            <p>扎染的水波纹、彝族刺绣几何纹、白族甲马版画，不仅仅是装饰图案。每一种纹样都是民族的符号语言，记录自然崇拜、民俗故事与族群记忆。</p>
+        </div>
+        <div class="article-block">
+            <h2>非遗与现代文创融合</h2>
+            <p>传统纹样可以提取出来，应用在书签、帆布袋、包装、数字界面设计。古老文化不再局限于村寨作坊，融入当代年轻人的日常用品，实现非遗活化。</p>
+        </div>
+    </div>
+    <footer>
+        <p>云滇风物 ©2026 云南非遗文化展示网站 | 毕业设计作品</p>
+    </footer>
+</body>
+</html>

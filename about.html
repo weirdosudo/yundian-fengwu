@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>关于我们 | 云滇风物</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC',sans-serif;}
+        h1,h2,h3{font-family:'Noto Serif SC',serif;}
+        :root{
+            --main:#2A5B57;
+            --accent:#A64B2A;
+            --bg:#F2EBDF;
+            --text:#2C2C2C;
+            --text-light:#666;
+            --light:#E5E0D4;
+        }
+        body{background:var(--bg);color:var(--text);padding-top:70px;}
+        nav{width:100%;position:fixed;top:0;padding:1.2rem 5rem;display:flex;justify-content:space-between;align-items:center;background:rgba(42,91,87,0.95);z-index:999;}
+        .logo{font-family:'Noto Serif SC',serif;font-size:1.5rem;color:#fff;font-weight:bold;}
+        .nav-links a{color:#fff;text-decoration:none;margin-left:2rem;transition:0.3s;}
+        .nav-links a:hover{color:var(--accent);}
+        .container{max-width:900px;margin:0 auto;padding:3rem 2rem;}
+        .page-title{text-align:center;margin-bottom:3rem;}
+        .block{background:#fff;padding:2rem;border-radius:8px;margin-bottom:2rem;line-height:1.8;}
+        .block h2{color:var(--main);margin-bottom:1rem;}
+        footer{background:var(--main);color:#fff;text-align:center;padding:2rem;margin-top:4rem;}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">云滇风物</div>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="list.html">非遗名录</a>
+            <a href="gallery.html">风物图集</a>
+            <a href="article.html">文化科普</a>
+            <a href="message.html">交流留言</a>
+            <a href="about.html">关于我们</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-title">
+            <h1>关于云滇风物</h1>
+            <p>一次云南非遗数字化网页设计实践</p>
+        </div>
+        <div class="block">
+            <h2>项目初衷</h2>
+            <p>本项目为毕业设计作品，打造云南非遗文化数字化展示网站。目的是传播云南少数民族非遗文化，用现代网页设计语言呈现传统手艺，打破大众对非遗陈旧刻板印象，吸引年轻群体了解非遗价值。</p>
+        </div>
+        <div class="block">
+            <h2>设计说明</h2>
+            <p>视觉色彩取自白族扎染靛蓝、彝族刺绣赭红，搭配原木米底色；页面装饰提取扎染、甲马、刺绣纹样，克制使用，避免繁杂。<br>技术栈：HTML+CSS+原生JavaScript；AI辅助素材生成、文案整理；C4D辅助器物渲染。AI作为创作工具，本人负责整体架构、交互逻辑、视觉规范与网页集成开发。</p>
+        </div>
+        <div class="block">
+            <h2>致谢</h2>
+            <p>感谢云南非遗保护公开文献资料，感谢指导老师在毕业设计过程中的指导。</p>
+        </div>
+    </div>
+    <footer>
+        <p>云滇风物 ©2026 云南非遗文化展示网站 | 毕业设计作品</p>
+    </footer>
+</body>
+</html>
