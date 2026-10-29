@@ -25,7 +25,14 @@
         .nav-links a{color:#fff;text-decoration:none;margin-left:2rem;transition:0.3s;}
         .nav-links a:hover{color:var(--accent);}
         /* Banner */
-        .banner{height:100vh;background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.4)),url('https://picsum.photos/id/1036/1920/1080');background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:0 2rem;}
+        .banner{height:100vh;min-height:560px;position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:0 2rem;background:#f4f1ea;}
+        .dither-veil{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-2;}
+        .banner::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(18,15,23,.38),rgba(18,15,23,.18) 48%,rgba(18,15,23,.55));pointer-events:none;}
+        .banner h1,.banner p,.banner .btn{position:relative;z-index:1;text-shadow:0 2px 18px rgba(0,0,0,.32);}
+        .banner h1{font-size:clamp(2.2rem,5vw,3.2rem);}
+        .banner p{font-size:clamp(1rem,2vw,1.2rem);}
+        .veil-hint{position:absolute;z-index:2;bottom:1.5rem;left:50%;transform:translateX(-50%);font-size:.78rem;letter-spacing:.12em;color:rgba(255,255,255,.85);white-space:nowrap;text-shadow:0 1px 8px #120f17;}
+        @media (prefers-reduced-motion: reduce){.dither-veil{touch-action:pan-y;}}
         .banner h1{font-size:3.2rem;margin-bottom:1rem;}
         .banner p{font-size:1.2rem;margin-bottom:2rem;opacity:0.9;}
         .btn{padding:0.8rem 2rem;background:var(--main);color:#fff;border:none;border-radius:2px;text-decoration:none;transition:0.3s;}
@@ -55,10 +62,12 @@
         </div>
     </nav>
 
-    <div class="banner">
+    <div class="banner" aria-label="云南非遗文化视觉展示">
+        <canvas class="dither-veil" id="ditherVeil" aria-hidden="true"></canvas>
         <h1>云藏千艺，滇承风物</h1>
         <p>探寻云南非物质文化遗产，看见手作里的民族记忆</p>
         <a href="list.html" class="btn">探索非遗</a>
+        <span class="veil-hint" aria-hidden="true">移动指针 · 探见风物本色</span>
     </div>
 
     <section>
@@ -96,15 +105,118 @@
     </footer>
 
 <script>
-    //导航滚动变色
+    // Navigation colour on scroll
     const nav = document.getElementById('navbar');
-    window.addEventListener('scroll',()=>{
-        if(window.scrollY > 80){
-            nav.classList.add('active');
-        }else{
-            nav.classList.remove('active');
+    window.addEventListener('scroll', () => nav.classList.toggle('active', window.scrollY > 80), { passive: true });
+
+    // DitherVeil — vanilla Canvas + JavaScript/CSS implementation.
+    // Floyd–Steinberg monochrome dither with a full-colour pointer reveal and fading trail.
+    (() => {
+        const canvas = document.getElementById('ditherVeil');
+        const host = canvas && canvas.closest('.banner');
+        if (!canvas || !host) return;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const colorCanvas = document.createElement('canvas');
+        const colorCtx = colorCanvas.getContext('2d');
+        const sampleCanvas = document.createElement('canvas');
+        const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+        const ditherCanvas = document.createElement('canvas');
+        const ditherCtx = ditherCanvas.getContext('2d');
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.src = 'https://images.unsplash.com/photo-1737071371043-761e02b1ef95?q=80&w=1400&auto=format&fit=crop';
+        const config = { pixelSize: 2, ink: [18,15,23], paper: [244,241,234], radius: 200, softness: 0.6, linger: 1000 };
+        let width = 0, height = 0, dpr = 1, raf = 0, lastMove = 0;
+        let pointer = { x: -9999, y: -9999, active: false };
+        let trail = [];
+
+        function drawCover(targetCtx, w, h) {
+            const scale = Math.max(w / image.naturalWidth, h / image.naturalHeight);
+            const sw = w / scale, sh = h / scale;
+            targetCtx.clearRect(0, 0, w, h);
+            targetCtx.drawImage(image, (image.naturalWidth - sw) / 2, (image.naturalHeight - sh) / 2, sw, sh, 0, 0, w, h);
         }
-    })
+
+        function rebuild() {
+            if (!width || !height || !image.naturalWidth) return;
+            colorCanvas.width = canvas.width; colorCanvas.height = canvas.height;
+            drawCover(colorCtx, colorCanvas.width, colorCanvas.height);
+            const w = Math.max(1, Math.ceil(width * dpr / config.pixelSize));
+            const h = Math.max(1, Math.ceil(height * dpr / config.pixelSize));
+            sampleCanvas.width = ditherCanvas.width = w;
+            sampleCanvas.height = ditherCanvas.height = h;
+            drawCover(sampleCtx, w, h);
+            const pixels = sampleCtx.getImageData(0, 0, w, h).data;
+            const lum = new Float32Array(w * h);
+            for (let i = 0, p = 0; i < pixels.length; i += 4, p++) lum[p] = (0.299*pixels[i] + 0.587*pixels[i+1] + 0.114*pixels[i+2]) / 255;
+            const out = ditherCtx.createImageData(w, h);
+            for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+                const i = y*w+x, old = lum[i], value = old < 0.5 ? 0 : 1, err = old-value, o = i*4, color = value ? config.paper : config.ink;
+                out.data[o]=color[0]; out.data[o+1]=color[1]; out.data[o+2]=color[2]; out.data[o+3]=255;
+                if (x+1<w) lum[i+1] += err*7/16;
+                if (y+1<h) { if (x>0) lum[i+w-1] += err*3/16; lum[i+w] += err*5/16; if (x+1<w) lum[i+w+1] += err/16; }
+            }
+            ditherCtx.putImageData(out, 0, 0);
+            paint();
+        }
+
+        function paint(now = performance.now()) {
+            if (!image.naturalWidth) return;
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(ditherCanvas, 0, 0, canvas.width, canvas.height);
+            ctx.imageSmoothingEnabled = true;
+            if (pointer.active) reveal(pointer.x, pointer.y, config.radius * dpr, 1);
+            trail = trail.filter(p => now - p.time < config.linger);
+            for (const p of trail) {
+                const a = Math.max(0, 1 - (now-p.time)/config.linger);
+                reveal(p.x, p.y, config.radius*dpr*(0.32+0.25*a), a*config.softness*0.8);
+            }
+            if (trail.length) raf = requestAnimationFrame(paint);
+            else raf = 0;
+        }
+
+        function reveal(x, y, radius, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.beginPath(); ctx.arc(x*dpr, y*dpr, radius, 0, Math.PI*2); ctx.clip();
+            ctx.drawImage(colorCanvas, 0, 0);
+            ctx.restore();
+        }
+
+        function resize() {
+            const rect = host.getBoundingClientRect();
+            width = Math.max(1, Math.round(rect.width)); height = Math.max(1, Math.round(rect.height));
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(width*dpr); canvas.height = Math.round(height*dpr);
+            rebuild();
+        }
+        canvas.addEventListener('pointermove', e => {
+            const r = canvas.getBoundingClientRect(), now = performance.now();
+            if (pointer.active) trail.push({ x: pointer.x, y: pointer.y, time: now });
+            pointer = { x: e.clientX-r.left, y: e.clientY-r.top, active: true };
+            lastMove = now;
+            if (trail.length > 32) trail.splice(0, trail.length-32);
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(paint);
+        }, { passive: true });
+        canvas.addEventListener('pointerleave', () => {
+            pointer.active = false;
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(paint);
+        }, { passive: true });
+        canvas.addEventListener('pointerdown', e => {
+            const r = canvas.getBoundingClientRect();
+            pointer = { x: e.clientX-r.left, y: e.clientY-r.top, active: true };
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(paint);
+        }, { passive: true });
+        image.addEventListener('load', resize);
+        image.addEventListener('error', () => { canvas.style.display='none'; host.style.background='linear-gradient(135deg,#2A5B57,#120f17)'; });
+        if ('ResizeObserver' in window) new ResizeObserver(resize).observe(host);
+        else window.addEventListener('resize', resize, { passive: true });
+        if (image.complete && image.naturalWidth) resize();
+    })();
 </script>
 </body>
 </html>
